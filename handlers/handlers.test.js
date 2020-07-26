@@ -9,6 +9,9 @@ describe('message handler', () => {
 
 describe('order handler with enough money', () => {
   const handler = commandHandlers[COMMAND_TYPES.ORDER]
+  describe('making orange juice', () => {
+    expect(handler({ drink: 'orange', amount: 99 })).toStrictEqual('O::')
+  })
   describe('making coffee', () => {
     test('no sugar and therefore w/o stick', () =>
       expect(handler({ amount: 99, drink: 'coffee', sugar: 0 })).toStrictEqual(
@@ -36,6 +39,14 @@ describe('order handler with enough money', () => {
       expect(
         handler({ amount: 99, drink: 'chocolate', sugar: 2 })
       ).toStrictEqual('H:2:0'))
+    test('xtra hot, w/ sugar & stick', () =>
+      expect(
+        handler({ amount: 99, drink: 'chocolate', isExtraHot: true, sugar: 1 })
+      ).toStrictEqual('Hh:1:0'))
+    test('xtra hot, w/o sugar & no stick', () =>
+      expect(
+        handler({ amount: 99, drink: 'chocolate', isExtraHot: true })
+      ).toStrictEqual('Hh::'))
   })
   describe('making tea', () => {
     test('no sugar and therefore w/o stick', () =>
@@ -50,13 +61,26 @@ describe('order handler with enough money', () => {
       expect(handler({ amount: 99, drink: 'tea', sugar: 2 })).toStrictEqual(
         'T:2:0'
       ))
+    test('xtra hot, w/ sugar & stick', () =>
+      expect(
+        handler({ amount: 99, drink: 'tea', isExtraHot: true, sugar: 1 })
+      ).toStrictEqual('Th:1:0'))
+    test('xtra hot, w/o sugar & no stick', () =>
+      expect(
+        handler({ amount: 99, drink: 'tea', isExtraHot: true })
+      ).toStrictEqual('Th::'))
   })
 })
 
 describe('order handler with NOT enough money', () => {
   const handler = commandHandlers[COMMAND_TYPES.ORDER]
   const { INSUFFICIENT_MONEY } = EXCEPTIONS
-  it('should throw when ordering coffe', () =>
+  it('should throw when ordering orange juice', () => {
+    expect(() => handler({ drink: 'orange', amount: 0 })).toThrow(
+      `${INSUFFICIENT_MONEY}`
+    )
+  })
+  it('should throw when ordering coffee', () =>
     expect(() => handler({ drink: 'coffee', amount: 0 })).toThrow(
       `${INSUFFICIENT_MONEY}`
     ))

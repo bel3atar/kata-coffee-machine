@@ -1,15 +1,16 @@
 import generateDrinkMakerCommandString from '..'
-import { COMMAND_TYPES, PRICES, EXCEPTIONS } from '../constants'
+import { DRINK_LETTERS, COMMAND_TYPES, PRICES, EXCEPTIONS } from '../constants'
 
 const messageHandler = ({ message }) => `M:${message}`
 
-const orderHandler = ({ drink, sugar, amount }) => {
+const orderHandler = ({ drink, sugar, amount, isExtraHot = false }) => {
   const expectedAmount = PRICES[drink]
   const isMoneyEnough = amount >= expectedAmount
   if (isMoneyEnough) {
-    const letter = { coffee: 'C', chocolate: 'H', tea: 'T' }[drink]
+    const letter = DRINK_LETTERS[drink]
     const sugarsAndStick = sugar > 0 ? `${sugar}:0` : ':'
-    return letter + ':' + sugarsAndStick
+    const extraHotFlag = isExtraHot ? 'h' : ''
+    return letter + extraHotFlag + ':' + sugarsAndStick
   } else {
     throw EXCEPTIONS.INSUFFICIENT_MONEY
   }
