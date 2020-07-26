@@ -15,9 +15,12 @@ const totalEarned = () =>
     0
   )
 
-const withLogging = handler => (...args) => {
+const resetSalesRecords = () =>
+  Object.keys(sales).forEach(drink => (sales[drink] = 0))
+
+const withLogging = handler => args => {
   try {
-    const result = handler(...args)
+    const result = handler(args)
     logSale(args.drink)
     return result
   } catch (e) {
@@ -25,4 +28,4 @@ const withLogging = handler => (...args) => {
   }
 }
 
-export { withLogging, logSale, unitsSoldOf, totalEarned }
+export { resetSalesRecords, withLogging, logSale, unitsSoldOf, totalEarned }
