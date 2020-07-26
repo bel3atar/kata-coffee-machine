@@ -1,3 +1,8 @@
+import {
+  EmailNotifier,
+  BeverageQuantityChecker,
+  withNotificationIfShortage
+} from '../services'
 import { withLogging } from '../reporting'
 import generateDrinkMakerCommandString from '..'
 import { DRINK_LETTERS, COMMAND_TYPES, PRICES, EXCEPTIONS } from '../constants'
@@ -24,7 +29,11 @@ const insufficientMoneyHandler = ({ amount, drink }) =>
 
 const commandHandlers = {
   [COMMAND_TYPES.MESSAGE]: messageHandler,
-  [COMMAND_TYPES.ORDER]: withLogging(orderHandler)
+  [COMMAND_TYPES.ORDER]: withNotificationIfShortage(withLogging(orderHandler), {
+    notifyMissingDrink: EmailNotifier.notifyMissingDrink,
+    isEmpty: BeverageQuantityChecker.isEmpty,
+    messageHandler
+  })
 }
 
 const exceptionHandlers = {
