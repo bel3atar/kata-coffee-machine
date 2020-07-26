@@ -1,4 +1,4 @@
-import { logSale } from '../reporting'
+import { withLogging } from '../reporting'
 import generateDrinkMakerCommandString from '..'
 import { DRINK_LETTERS, COMMAND_TYPES, PRICES, EXCEPTIONS } from '../constants'
 
@@ -8,7 +8,6 @@ const orderHandler = ({ drink, sugar, amount, isExtraHot = false }) => {
   const expectedAmount = PRICES[drink]
   const isMoneyEnough = amount >= expectedAmount
   if (isMoneyEnough) {
-    logSale(drink)
     const letter = DRINK_LETTERS[drink]
     const sugarsAndStick = sugar > 0 ? `${sugar}:0` : ':'
     const extraHotFlag = isExtraHot ? 'h' : ''
@@ -25,7 +24,7 @@ const insufficientMoneyHandler = ({ amount, drink }) =>
 
 const commandHandlers = {
   [COMMAND_TYPES.MESSAGE]: messageHandler,
-  [COMMAND_TYPES.ORDER]: orderHandler
+  [COMMAND_TYPES.ORDER]: withLogging(orderHandler)
 }
 
 const exceptionHandlers = {

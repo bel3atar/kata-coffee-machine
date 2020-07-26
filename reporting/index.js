@@ -15,4 +15,14 @@ const totalEarned = () =>
     0
   )
 
-export { logSale, unitsSoldOf, totalEarned }
+const withLogging = handler => (...args) => {
+  try {
+    const result = handler(...args)
+    logSale(args.drink)
+    return result
+  } catch (e) {
+    throw e
+  }
+}
+
+export { withLogging, logSale, unitsSoldOf, totalEarned }
